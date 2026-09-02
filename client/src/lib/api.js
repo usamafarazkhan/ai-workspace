@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const rawBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const rawBase = process.env.NEXT_PUBLIC_API_URL || 'https://ai-workspace-7e6z.onrender.com';
 const API_BASE_URL = rawBase.endsWith('/api')
   ? rawBase.replace(/\/$/, '')
   : `${rawBase.replace(/\/$/, '')}/api`;
