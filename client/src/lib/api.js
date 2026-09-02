@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-const rawBase = process.env.NEXT_PUBLIC_API_URL || 'https://ai-workspace-7e6z.onrender.com';
+let defaultBase = 'https://ai-workspace-7e6z.onrender.com';
+if (typeof window !== 'undefined') {
+  defaultBase = window.location.origin;
+}
+
+const rawBase = process.env.NEXT_PUBLIC_API_URL || defaultBase;
 const API_BASE_URL = rawBase.endsWith('/api')
   ? rawBase.replace(/\/$/, '')
   : `${rawBase.replace(/\/$/, '')}/api`;

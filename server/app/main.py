@@ -1,5 +1,8 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlalchemy.future import select
 
 from app.database import engine, Base, AsyncSessionLocal
@@ -310,18 +313,37 @@ async def startup_event():
             await session.commit()
             print("[Backend] Seeded initial demo project with classes, members, and artifacts successfully!")
 
-@app.get("/")
-async def root():
+@app.get("/api/health")
+async def health_check():
     return {
         "status": "online",
         "service": "AI Project Workspace Backend Server",
-        "version": "1.0.0",
-        "active_features": [
-            "Multi-Agent Supervisor Routing",
-            "Project Classes / Workstreams",
-            "Private Personal Assistant",
-            "RAG Knowledge Engine",
-            "Task Kanban & Timeline",
-            "Versioned Artifacts Studio"
-        ]
+        "version": "1.0.0"
     }
+
+# Mount static Next.js export frontend if client/out directory exists
+client_out_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../client/out"))
+if os.path.exists(client_out_dir):
+    next_dir = os.path.join(client_out_dir, "_next")
+    if os.path.exists(next_dir):
+        app.mount("/_next", StaticFiles(directory=next_dir), name="next_assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        if full_path and (full_path.startswith("api/") or full_path == "docs" or full_path == "openapi.json"):
+            return None
+        file_path = os.path.join(client_out_dir, full_path)
+        if os.path.isfile(file_path):
+            return FileResponse(file_path)
+        index_file = os.path.join(client_out_dir, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        return {"status": "online", "service": "AI Project Workspace Engine"}
+else:
+    @app.get("/")
+    async def root():
+        return {
+            "status": "online",
+            "service": "AI Project Workspace Backend Server",
+            "version": "1.0.0"
+        }

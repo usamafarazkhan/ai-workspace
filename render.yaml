@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: ai-workspace
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "cd server && python run.py"
+    envVars:
+      - key: APP_SECRET_KEY
+        value: multim-project-secret-key-change-in-production-2024
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
