@@ -1,10 +1,12 @@
 import os
+import sys
 import uvicorn
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load .env from the server directory before anything else starts
-load_dotenv(dotenv_path=Path(__file__).parent / ".env")
+server_dir = Path(__file__).parent
+sys.path.insert(0, str(server_dir))
+load_dotenv(dotenv_path=server_dir / ".env")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))

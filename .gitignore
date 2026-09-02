@@ -28,7 +28,6 @@ server/uploads/
 # Node / Next.js
 client/node_modules/
 client/.next/
-client/out/
 client/.env.local
 
 # IDE / Editor
